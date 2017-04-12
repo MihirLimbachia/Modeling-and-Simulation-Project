@@ -1,5 +1,5 @@
 function [newgrassgrid,newanimalgrid,newrationgrid,newagegrid]= consume(grassgrid,animalgrid,rationgrid,extagegrid)
-    global MALESHEEP FEMALESHEEP MALEWOLF FEMALEWOLF MAX_SHEEP_RATION MAX_WOLF_RATION SHEEP_ENERGY WOLF_ENERGY GRASS BORDER
+    global MALESHEEP FEMALESHEEP MALEWOLF FEMALEWOLF MAX_SHEEP_RATION MAX_WOLF_RATION SHEEP_ENERGY WOLF_ENERGY GRASS BORDER 
     newgrassgrid=grassgrid;
     newanimalgrid=animalgrid;
     newrationgrid=rationgrid;
@@ -12,15 +12,107 @@ function [newgrassgrid,newanimalgrid,newrationgrid,newagegrid]= consume(grassgri
                 if grassgrid(i,j)==GRASS && rationgrid(i,j)<MAX_SHEEP_RATION
                     newgrassgrid(i,j)=0;
                     newrationgrid(i,j)=min(MAX_SHEEP_RATION,rationgrid(i,j)+SHEEP_ENERGY);
-                end
+                else 
+                        N=newgrassgrid(i-1,j);
+                        S=newgrassgrid(i+1,j);
+                        E=newgrassgrid(i,j-1);
+                        W=newgrassgrid(i,j+1);
+                        NE=newgrassgrid(i-1,j-1);
+                        NW=newgrassgrid(i-1,j+1);
+                        SE=newgrassgrid(i+1,j-1);
+                        SW=newgrassgrid(i+1,j+1);
+                        Na=newanimalgrid(i-1,j);
+                        Sa=newanimalgrid(i+1,j);
+                        Ea=newanimalgrid(i,j-1);
+                        Wa=newanimalgrid(i,j+1);
+                        NEa=newanimalgrid(i-1,j-1);
+                        NWa=newanimalgrid(i-1,j+1);
+                        SEa=newanimalgrid(i+1,j-1);
+                        SWa=newanimalgrid(i+1,j+1);
+                        ls=[];
+                        Nsg=1;Esg=2;Wsg=3;Ssg=4;
+                        NEsg=5;NWsg=6;SEsg=7;SWsg=8;
+                        if  N==GRASS && Na==0 ls=[ls Nsg];end
+                        if  S==GRASS && Sa==0 ls=[ls Ssg];end
+                        if  E==GRASS && Ea==0 ls=[ls Esg];end
+                        if  W==GRASS && Wa==0 ls=[ls Wsg];end               
+                        if  NE==GRASS && NEa==0 ls=[ls NEsg];end
+                        if  NW==GRASS && NWa==0 ls=[ls NWsg];end
+                        if  SE==GRASS && SEa==0 ls=[ls SEsg];end
+                        if  SW==GRASS && SWa==0 ls=[ls SWsg];end
+                        if (size(ls,1)>0)
+                            x=randi(size(ls,2));
+                            mov=ls(1,x);
+                            switch mov
+                            case Nsg
+                                newanimalgrid(i-1,j)=newanimalgrid(i,j);
+                                newanimalgrid(i,j)=0;
+                                newrationgrid(i-1,j)=min(MAX_SHEEP_RATION,newrationgrid(i,j)+SHEEP_ENERGY);
+                                newrationgrid(i,j)=0;
+                                newagegrid(i-1,j)=newagegrid(i,j);
+                                newagegrid(i,j)=0;
+                             case Esg
+                                newanimalgrid(i,j-1)=newanimalgrid(i,j);
+                                newanimalgrid(i,j)=0;
+                                newrationgrid(i,j-1)=min(MAX_SHEEP_RATION,newrationgrid(i,j)+SHEEP_ENERGY);
+                                newrationgrid(i,j)=0;
+                                newagegrid(i,j-1)=newagegrid(i,j);
+                                newagegrid(i,j)=0;
+                             case Ssg
+                                newanimalgrid(i+1,j)=newanimalgrid(i,j);
+                                newanimalgrid(i,j)=0;
+                                newrationgrid(i+1,j)=min(MAX_SHEEP_RATION,newrationgrid(i,j)+SHEEP_ENERGY);
+                                newrationgrid(i,j)=0;
+                                newagegrid(i+1,j)=newagegrid(i,j);
+                                newagegrid(i,j)=0;
+                             case Wsg
+                                newanimalgrid(i,j+1)=newanimalgrid(i,j);
+                                newanimalgrid(i,j)=0;
+                                newrationgrid(i,j+1)=min(MAX_SHEEP_RATION,newrationgrid(i,j)+SHEEP_ENERGY);
+                                newrationgrid(i,j)=0;
+                                newagegrid(i,j+1)=newagegrid(i,j);
+                                newagegrid(i,j)=0;
+                             case NEsg
+                                newanimalgrid(i-1,j-1)=newanimalgrid(i,j);
+                                newanimalgrid(i,j)=0;
+                                newrationgrid(i-1,j-1)=min(MAX_SHEEP_RATION,newrationgrid(i,j)+SHEEP_ENERGY);
+                                newrationgrid(i,j)=0;
+                                newagegrid(i-1,j-1)=newagegrid(i,j);
+                                newagegrid(i,j)=0;
+                             case NWsg
+                                newanimalgrid(i-1,j+1)=newanimalgrid(i,j);
+                                newanimalgrid(i,j)=0;
+                                newrationgrid(i-1,j+1)=min(MAX_SHEEP_RATION,newrationgrid(i,j)+SHEEP_ENERGY);
+                                newrationgrid(i,j)=0;
+                                newagegrid(i-1,j+1)=newagegrid(i,j);
+                                newagegrid(i,j)=0;
+                            case SWsg
+                                newanimalgrid(i+1,j+1)=newanimalgrid(i,j);
+                                newanimalgrid(i,j)=0;
+                                newrationgrid(i+1,j+1)=min(MAX_SHEEP_RATION,newrationgrid(i,j)+SHEEP_ENERGY);
+                                newrationgrid(i,j)=0;
+                                newagegrid(i+1,j+1)=newagegrid(i,j);
+                                newagegrid(i,j)=0;
+                            case SEsg
+                                newanimalgrid(i+1,j-1)=newanimalgrid(i,j);
+                                newanimalgrid(i,j)=0;
+                                newrationgrid(i+1,j-1)=min(MAX_SHEEP_RATION,newrationgrid(i,j)+SHEEP_ENERGY);
+                                newrationgrid(i,j)=0;
+                                newagegrid(i+1,j-1)=newagegrid(i,j);
+                                newagegrid(i,j)=0;
+                            otherwise
+                                nothingtodo=0;
+                        end    
+                        end    
+                end    
             end
         end
     end
     
     for i=2:1:n-1
         for j=2:1:m-1
-            if newanimalgrid(i,j)==MALEWOLF || newanimalgrid(i,j)==FEMALEWOLF
-                    if(newrationgrid(i,j)<MAX_WOLF_RATION)    
+            if animalgrid(i,j)==MALEWOLF || animalgrid(i,j)==FEMALEWOLF
+                    if(rationgrid(i,j)<MAX_WOLF_RATION)    
                         N=newanimalgrid(i-1,j);
                         S=newanimalgrid(i+1,j);
                         E=newanimalgrid(i,j-1);
@@ -181,7 +273,9 @@ function [newgrassgrid,newanimalgrid,newrationgrid,newagegrid]= consume(grassgri
                         end
               end
               end
-          end
-        end
-            
+          
+            end
     end
+    
+      
+   
